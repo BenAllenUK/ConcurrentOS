@@ -61,9 +61,12 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   TIMER0->Timer1Ctrl    |= 0x00000080; // enable          timer
 
   GICC0->PMR             = 0x000000F0; // unmask all            interrupts
-  GICD0->ISENABLER[ 1 ] |= 0x00000010; // enable timer          interrupt
+  GICD0->ISENABLER[ 1 ] |= 0x00001010; // enable timer          interrupt
   GICC0->CTLR            = 0x00000001; // enable GIC interface
   GICD0->CTLR            = 0x00000001; // enable GIC distributor
+
+  UART0->IMSC           |= 0x00000010; // enable UART    (Rx) interrupt
+  UART0->CR              = 0x00000301; // enable UART (Tx+Rx)
 
   irq_enable();
 
@@ -115,6 +118,22 @@ void kernel_handler_irq(ctx_t* ctx, uint32_t id_s) {
   if( id == GIC_SOURCE_TIMER0 ) {
     scheduler( ctx );
     TIMER0->Timer1IntClr = 0x01;
+  } else if( id == GIC_SOURCE_UART0 ) {
+    uint8_t x = PL011_getc( UART0 );
+
+    scheduler(ctx);
+    // PL011_putc( UART0, 'K' );
+    // PL011_putc( UART0, '<' );
+    // PL011_putc( UART0,  x  );
+    // PL011_putc( UART0, '>' );
+    // PL011_putc( UART0, '\n' );
+    // PL011_putc( UART0, '\n' );
+    // PL011_putc( UART0, '\n' );
+    // PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );
+
+    UART0->ICR = 0x10;
+  } else {
+    PL011_putc( UART0, '\n' );
   }
 
   // Step 5: write the interrupt identifier to signal we're done.

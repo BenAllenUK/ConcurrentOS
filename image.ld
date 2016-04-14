@@ -21,5 +21,7 @@ SECTIONS {
   /* allocate stack for P2       */
   .       = . + 0x00001000;
   tos_P2  = .;
+  /* allocate stack for irq mode */
+  .       = . + 0x00001000;
   tos_irq = .;
 }
