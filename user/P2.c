@@ -16,6 +16,18 @@ void P2() {
 
     for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
       uint32_t r = weight( x );  // printf( "weight( %d ) = %d\n", x, r );
+
+      char *xAsString;
+      char *rAsString;
+      uint32_to_string(xAsString, x);
+      uint32_to_string(rAsString, r);
+
+      writeString("weight( ");
+      writeString(xAsString);
+      writeString(" ) = ");
+      writeString(rAsString);
+      writeString("\n");
+
     }
   }
 
