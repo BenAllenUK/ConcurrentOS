@@ -29,6 +29,7 @@ void P0() {
       char *xAsString;
       uint32_to_string(xAsString, x);
 
+      writeString("P0: ");
       writeString("is_prime( ");
       writeString(xAsString);
       writeString(" ) = ");

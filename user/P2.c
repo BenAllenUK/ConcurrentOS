@@ -22,6 +22,7 @@ void P2() {
       uint32_to_string(xAsString, x);
       uint32_to_string(rAsString, r);
 
+      writeString("P2: ");
       writeString("weight( ");
       writeString(xAsString);
       writeString(" ) = ");
