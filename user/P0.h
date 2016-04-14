@@ -5,6 +5,12 @@
 #include <stdint.h>
 
 #include "libc.h"
+#include <string.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
 
 // define symbols for P1 entry point and top of stack
 extern void (*entry_P0)();

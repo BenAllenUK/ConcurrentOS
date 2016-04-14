@@ -16,13 +16,24 @@ int is_prime( uint32_t x ) {
 
 void P0() {
   int x = 0;
-  char* m = "hello world, I'm P0\n";
+
   while( 1 ) {
     // test whether each x for 2^8 < x < 2^24 is prime or not
 
     for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
-      int r = is_prime( x ); // printf( "is_prime( %d ) = %d\n", x, r );
-      write( 0, m, 20 );
+      int r = is_prime( x );
+
+      char *rAsString;
+      int_to_string(rAsString, r);
+
+      char *xAsString;
+      uint32_to_string(xAsString, x);
+
+      write( 0, "is_prime( ", 10);
+      write( 0, xAsString, strlen(xAsString));
+      write( 0, " ) = ", 5);
+      write( 0, rAsString, strlen(rAsString));
+      write( 0, "\n", 1);
     }
   }
 

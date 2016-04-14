@@ -10,5 +10,8 @@ void yield();
 // write n bytes from x to the file descriptor fd
 int write( int fd, void* x, size_t n );
 
+void uint32_to_string(char *out, uint32_t in);
+
+void int_to_string(char *out, uint32_t in);
 
 #endif
