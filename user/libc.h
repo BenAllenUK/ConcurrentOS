@@ -4,6 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <string.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
 // cooperatively yield control of processor, i.e., invoke the scheduler
 void yield();
 
@@ -12,6 +17,8 @@ int write( int fd, void* x, size_t n );
 
 void uint32_to_string(char *out, uint32_t in);
 
-void int_to_string(char *out, uint32_t in);
+void int_to_string(char *out, int in);
+
+void writeString(char *string);
 
 #endif

@@ -5,10 +5,7 @@
 #include <stdint.h>
 
 #include "libc.h"
-#include <string.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 
 
 

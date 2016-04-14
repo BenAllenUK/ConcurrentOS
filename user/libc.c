@@ -56,5 +56,7 @@ void uint32_to_string(char *out, uint32_t in) {
 void int_to_string(char* out, int in) {
   char rChar = in + '0';
   out = &rChar;
-
+}
+void writeString(char *string){
+  write( 0, string, strlen(string));
 }

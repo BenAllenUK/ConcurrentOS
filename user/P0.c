@@ -29,11 +29,11 @@ void P0() {
       char *xAsString;
       uint32_to_string(xAsString, x);
 
-      write( 0, "is_prime( ", 10);
-      write( 0, xAsString, strlen(xAsString));
-      write( 0, " ) = ", 5);
-      write( 0, rAsString, strlen(rAsString));
-      write( 0, "\n", 1);
+      writeString("is_prime( ");
+      writeString(xAsString);
+      writeString(" ) = ");
+      writeString(rAsString);
+      writeString("\n");
     }
   }
 
