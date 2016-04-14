@@ -1,21 +1,26 @@
 #include "kernel.h"
 
-pcb_t pcb[ 3 ], *current = NULL;
+pcb_t pcb[ 4 ], *current = NULL;
 
 void scheduler( ctx_t* ctx ) {
+
   if      ( current == &pcb[ 0 ] ) {
     memcpy( &pcb[ 0 ].ctx, ctx, sizeof( ctx_t ) );
-
     memcpy( ctx, &pcb[ 1 ].ctx, sizeof( ctx_t ) );
     current = &pcb[ 1 ];
   }
   else if ( current == &pcb[ 1 ] ) {
-    // memcpy( &pcb[ 1 ].ctx, ctx, sizeof( ctx_t ) );
+    memcpy( &pcb[ 1 ].ctx, ctx, sizeof( ctx_t ) );
     memcpy( ctx, &pcb[ 2 ].ctx, sizeof( ctx_t ) );
     current = &pcb[ 2 ];
   }
   else if ( current == &pcb[ 2 ] ) {
-    // memcpy( &pcb[ 2 ].ctx, ctx, sizeof( ctx_t ) );
+    memcpy( &pcb[ 2 ].ctx, ctx, sizeof( ctx_t ) );
+    memcpy( ctx, &pcb[ 3 ].ctx, sizeof( ctx_t ) );
+    current = &pcb[ 3 ];
+  }
+  else if ( current == &pcb[ 3 ] ) {
+    memcpy( &pcb[ 3 ].ctx, ctx, sizeof( ctx_t ) );
     memcpy( ctx, &pcb[ 0 ].ctx, sizeof( ctx_t ) );
     current = &pcb[ 0 ];
   }
@@ -33,20 +38,26 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   memset( &pcb[ 0 ], 0, sizeof( pcb_t ) );
   pcb[ 0 ].pid      = 0;
   pcb[ 0 ].ctx.cpsr = 0x50;
-  pcb[ 0 ].ctx.pc   = ( uint32_t )( entry_P0 );
-  pcb[ 0 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
+  pcb[ 0 ].ctx.pc   = ( uint32_t )( entry_PDef );
+  pcb[ 0 ].ctx.sp   = ( uint32_t )(  &tos_PDef );
 
   memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   pcb[ 1 ].pid      = 1;
   pcb[ 1 ].ctx.cpsr = 0x50;
-  pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_P1 );
-  pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
+  pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_P0 );
+  pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
 
   memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
   pcb[ 2 ].pid      = 2;
   pcb[ 2 ].ctx.cpsr = 0x50;
-  pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P2 );
-  pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
+  pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
+  pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
+
+  memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
+  pcb[ 3 ].pid      = 3;
+  pcb[ 3 ].ctx.cpsr = 0x50;
+  pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
+  pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
 
   /* Once the PCBs are initialised, we (arbitrarily) select one to be
    * restored (i.e., executed) when the function then returns.

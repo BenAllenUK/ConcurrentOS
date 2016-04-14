@@ -12,6 +12,9 @@ SECTIONS {
   /* allocate stack for svc mode */
   .       = . + 0x00001000;
   tos_svc = .;
+  /* allocate stack for PDef       */
+  .       = . + 0x00001000;
+  tos_PDef  = .;
   /* allocate stack for P0       */
   .       = . + 0x00001000;
   tos_P0  = .;
