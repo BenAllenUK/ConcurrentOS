@@ -12,6 +12,13 @@
 
 #include <string.h>
 
+#include "structures/queues.h"
+#include "structures/lifo.h"
+#include "structures/fifo.h"
+
+#include "constants.h"
+#include "core.h"
+
 // Include definitions relating to the 2 user programs.
 
 #include "P0.h"
@@ -29,15 +36,5 @@
  * - a type that captures a process PCB.
  */
 
-typedef struct {
-  uint32_t cpsr, pc, gpr[ 13 ], sp, lr;
-} ctx_t;
-
-typedef int pid_t;
-
-typedef struct {
-  pid_t pid;
-  ctx_t ctx;
-} pcb_t;
 
 #endif

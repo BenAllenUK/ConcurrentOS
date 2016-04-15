@@ -6,7 +6,7 @@
 
 #include "libc.h"
 
-
+#include "structures/fifo.h"
 
 
 // define symbols for P1 entry point and top of stack
