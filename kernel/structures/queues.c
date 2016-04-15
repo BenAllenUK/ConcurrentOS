@@ -9,7 +9,7 @@ void queue_init(queue_t* Q, int maxElements)
   /* Initialise its properties */
   // memset( Q->elements, 0, sizeof(int)*10 );
   // Q->elements = (int *)malloc(sizeof(int)*maxElements);
-  
+
   /* Return the pointer */
 
 }
@@ -45,12 +45,8 @@ void queue_remove_end(queue_t *Q){
   else
   {
     Q->size--;
-    Q->front++;
-    /* As we fill elements in circular fashion */
-    if(Q->front==Q->capacity)
-    {
-      Q->front=0;
-    }
+    Q->rear = Q->rear - 1;
+    Q->elements[Q->size] = 0;
   }
   return;
 }
@@ -62,12 +58,13 @@ int queue_front(queue_t *Q){
   /* Return the element which is at the front*/
   return Q->elements[Q->front];
 }
-int queue_back(queue_t *Q){
+int queue_end(queue_t *Q){
   if(Q->size==0){
     // printf("queue_t is Empty\n");
   }
   return Q->elements[Q->rear];
 }
+
 void queue_add(queue_t *Q,int element)
 {
   /* If the queue_t is full, we cannot push an element into it as there is no space for it.*/

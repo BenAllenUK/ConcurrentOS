@@ -7,7 +7,7 @@
 #include "libc.h"
 #include "PL011.h"
 
-#include "structures/fifo.h"
+#include "structures/lifo.h"
 
 
 // define symbols for P1 entry point and top of stack

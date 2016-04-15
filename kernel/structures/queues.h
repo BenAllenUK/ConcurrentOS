@@ -24,7 +24,9 @@ typedef struct
 
 void queue_init(queue_t *Q, int maxElements);
 void queue_remove(queue_t *Q);
+void queue_remove_end(queue_t *Q);
 int queue_front(queue_t *Q);
+int queue_end(queue_t *Q);
 void queue_add(queue_t *Q,int element);
 
 #endif

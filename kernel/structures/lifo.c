@@ -1,19 +1,21 @@
 #include "lifo.h"
 
-queue_t* lifo_init(){
-  queue_t *lifo;
+queue_t* lifo_init(queue_t* lifo){
   memset( lifo, 0, sizeof( queue_t ) );
-  // lifo = queue_init(MAX_SIZE);
+  lifo->size = 0;
+  lifo->capacity = 10;
+  lifo->front = 0;
+  lifo->rear = -1;
   return lifo;
 }
 
 int lifo_peek(queue_t* lifo){
-  return queue_front(lifo);
+  return queue_end(lifo);
 }
 
 int lifo_pop(queue_t* lifo){
-  int front = queue_front(lifo);
-  queue_remove(lifo);
+  int front = queue_end(lifo);
+  queue_remove_end(lifo);
   return front;
 }
 
