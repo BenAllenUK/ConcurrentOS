@@ -2,26 +2,26 @@
 
 pcb_t pcb[ MAX_PROCCESORS ], *current = NULL;
 
+
+int timeSlicesLeft = 0;
+
 void scheduler( ctx_t* ctx ) {
-  if      ( current == &pcb[ 0 ] ) {
-    memcpy( &pcb[ 0 ].ctx, ctx, sizeof( ctx_t ) );
-    memcpy( ctx, &pcb[ 1 ].ctx, sizeof( ctx_t ) );
-    current = &pcb[ 1 ];
-  }
-  else if ( current == &pcb[ 1 ] ) {
-    memcpy( &pcb[ 1 ].ctx, ctx, sizeof( ctx_t ) );
-    memcpy( ctx, &pcb[ 2 ].ctx, sizeof( ctx_t ) );
-    current = &pcb[ 2 ];
-  }
-  else if ( current == &pcb[ 2 ] ) {
-    memcpy( &pcb[ 2 ].ctx, ctx, sizeof( ctx_t ) );
-    memcpy( ctx, &pcb[ 3 ].ctx, sizeof( ctx_t ) );
-    current = &pcb[ 3 ];
-  }
-  else if ( current == &pcb[ 3 ] ) {
-    memcpy( &pcb[ 3 ].ctx, ctx, sizeof( ctx_t ) );
-    memcpy( ctx, &pcb[ 0 ].ctx, sizeof( ctx_t ) );
-    current = &pcb[ 0 ];
+
+  if(timeSlicesLeft == 0) {
+    // Switch process
+    int current_pid = current->pid;
+    memcpy( &pcb[ current_pid ].ctx, ctx, sizeof( ctx_t ) );
+    memcpy( ctx, &pcb[ current_pid + 1 ].ctx, sizeof( ctx_t ) );
+
+    // Check if last process
+    if( current_pid + 1 ){
+
+    }
+    current = &pcb[ current_pid + 1 ];
+    timeSlicesLeft = current->stats.priority;
+  } else {
+    // Continue with current process
+    timeSlicesLeft--;
   }
 }
 
@@ -39,31 +39,39 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 0 ].ctx.cpsr = 0x50;
   pcb[ 0 ].ctx.pc   = ( uint32_t )( entry_PDef );
   pcb[ 0 ].ctx.sp   = ( uint32_t )(  &tos_PDef );
+  pcb[ 0 ].stats.priority = 1;
+  pcb[ 0 ].stats.parentId = 0;
 
   memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   pcb[ 1 ].pid      = 1;
   pcb[ 1 ].ctx.cpsr = 0x50;
   pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_P0 );
   pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
+  pcb[ 1 ].stats.priority = 1;
+  pcb[ 1 ].stats.parentId = 0;
 
   memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
   pcb[ 2 ].pid      = 2;
   pcb[ 2 ].ctx.cpsr = 0x50;
   pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
   pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
+  pcb[ 2 ].stats.priority = 1;
+  pcb[ 2 ].stats.parentId = 0;
 
   memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
   pcb[ 3 ].pid      = 3;
   pcb[ 3 ].ctx.cpsr = 0x50;
   pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
   pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
+  pcb[ 3 ].stats.priority = 1;
+  pcb[ 3 ].stats.parentId = 0;
 
   /* Once the PCBs are initialised, we (arbitrarily) select one to be
    * restored (i.e., executed) when the function then returns.
    */
 
   current = &pcb[ 0 ]; memcpy( ctx, &current->ctx, sizeof( ctx_t ) );
-
+  timeSlicesLeft = current->stats.priority;
   TIMER0->Timer1Load     = TIMER_INTERVAL; // select period = 2^20 ticks ~= 1 sec
   TIMER0->Timer1Ctrl     = 0x00000002; // select 32-bit   timer
   TIMER0->Timer1Ctrl    |= 0x00000040; // select periodic timer
