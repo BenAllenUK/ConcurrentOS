@@ -1,24 +1,24 @@
 #include "lifo.h"
 
-lifo_t* lifo_init(){
-  lifo_t *lifo;
-  memset( lifo, 0, sizeof( lifo_t ) );
-  lifo->queue = queue_init(MAX_SIZE);
+queue_t* lifo_init(){
+  queue_t *lifo;
+  memset( lifo, 0, sizeof( queue_t ) );
+  // lifo = queue_init(MAX_SIZE);
   return lifo;
 }
 
-int lifo_peek(lifo_t* lifo){
-  return queue_front(lifo->queue);
+int lifo_peek(queue_t* lifo){
+  return queue_front(lifo);
 }
 
-int lifo_pop(lifo_t* lifo){
-  int front = queue_front(lifo->queue);
-  queue_remove(lifo->queue);
+int lifo_pop(queue_t* lifo){
+  int front = queue_front(lifo);
+  queue_remove(lifo);
   return front;
 }
 
-void lifo_push(lifo_t* lifo,int number){
-  queue_add(lifo->queue, number);
+void lifo_push(queue_t* lifo,int number){
+  queue_add(lifo, number);
 }
 
 // int lifo_main()

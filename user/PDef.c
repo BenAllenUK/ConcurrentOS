@@ -4,29 +4,17 @@
 void PDef() {
   int x = 0;
 
-  while( 1 ) {
-      // Do nothing
+  queue_t *fifo;
+  fifo_init(fifo);
 
-    fifo_t *fifo = fifo_init();
-    // fifo_push(fifo, 1);
-    // fifo_push(fifo, 2);
-    // fifo_push(fifo, 3);
-    // writeString("Front element is: ");
-    // char* numAsStr;
-    // int_to_string(numAsStr, fifo_pop(fifo));
-    // writeString(numAsStr);
-    // writeString("\n");
-    // char* numAsStr2;
-    // int_to_string(numAsStr2, fifo_pop(fifo));
-    // writeString("Front element is");
-    // writeString(numAsStr2);
-    // writeString("\n");
-    //
-    // fifo_push(fifo, 4);
-    // writeString("Front element is (peek): ");
-    // int_to_string(numAsStr2, fifo_peek(fifo));
-    // writeString(numAsStr2);
-    writeString("\n");
+  while( 1 ) {
+    fifo_push(fifo, 1);
+    fifo_push(fifo, 2);
+    int r1 = fifo_pop(fifo);
+    int r2 = fifo_pop(fifo);
+    PL011_putc( UART0, r1 + '0' );
+    PL011_putc( UART0, r2 + '0' );
+
 
   }
 

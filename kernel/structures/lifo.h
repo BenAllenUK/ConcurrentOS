@@ -13,13 +13,9 @@
 
 #define MAX_SIZE 10
 
-typedef struct
-{
-        Queue* queue;
-} lifo_t;
 
-lifo_t* lifo_init();
-int lifo_peek(lifo_t* lifo);
-void lifo_push(lifo_t* lifo,int number);
+queue_t* lifo_init();
+int lifo_peek(queue_t* lifo);
+void lifo_push(queue_t* lifo,int number);
 
 #endif

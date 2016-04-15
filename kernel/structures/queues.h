@@ -13,18 +13,18 @@
   Size stands for the current size of the Queue and elements is the array of elements. front is the
  index of first element (the index at which we remove the element) and rear is the index of last element
  (the index at which we insert the element) */
-typedef struct Queue
+typedef struct
 {
         int capacity;
         int size;
         int front;
         int rear;
-        int *elements;
-} Queue;
+        int elements[10];
+} queue_t;
 
-Queue * queue_init(int maxElements);
-void queue_remove(Queue *Q);
-int queue_front(Queue *Q);
-void queue_add(Queue *Q,int element);
+void queue_init(queue_t *Q, int maxElements);
+void queue_remove(queue_t *Q);
+int queue_front(queue_t *Q);
+void queue_add(queue_t *Q,int element);
 
 #endif

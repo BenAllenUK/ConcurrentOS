@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "libc.h"
+#include "PL011.h"
 
 #include "structures/fifo.h"
 

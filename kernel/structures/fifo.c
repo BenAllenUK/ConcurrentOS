@@ -1,24 +1,26 @@
 #include "fifo.h"
 
-fifo_t* fifo_init(){
-  fifo_t *fifo;
-  memset( fifo, 0, sizeof( fifo_t ) );
-  fifo->queue = queue_init(MAX_SIZE);
+queue_t* fifo_init(queue_t* fifo){
+  memset( fifo, 0, sizeof( queue_t ) );
+  fifo->size = 0;
+  fifo->capacity = 10;
+  fifo->front = 0;
+  fifo->rear = -1;
   return fifo;
 }
 
-int fifo_peek(fifo_t* fifo){
-  return queue_front(fifo->queue);
+int fifo_peek(queue_t* fifo){
+  return queue_front(fifo);
 }
 
-int fifo_pop(fifo_t* fifo){
-  int front = queue_front(fifo->queue);
-  queue_remove(fifo->queue);
+int fifo_pop(queue_t* fifo){
+  int front = queue_front(fifo);
+  queue_remove(fifo);
   return front;
 }
 
-void fifo_push(fifo_t* fifo,int number){
-  queue_add(fifo->queue, number);
+void fifo_push(queue_t* fifo,int number){
+  queue_add(fifo, number);
 }
 
 // int fifo_main()

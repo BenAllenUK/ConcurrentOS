@@ -13,13 +13,10 @@
 
 #define MAX_SIZE 10
 
-typedef struct {
-  Queue* queue;
-} fifo_t;
 
-fifo_t* fifo_init();
-int fifo_peek(fifo_t* fifo);
-void fifo_push(fifo_t* fifo,int number);
-int fifo_pop(fifo_t* fifo);
+queue_t* fifo_init();
+int fifo_peek(queue_t* fifo);
+void fifo_push(queue_t* fifo,int number);
+int fifo_pop(queue_t* fifo);
 
 #endif

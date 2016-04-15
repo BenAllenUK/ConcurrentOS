@@ -1,28 +1,24 @@
 #include "queues.h"
-/* crateQueue function takes argument the maximum number of elements the Queue can hold, creates
-a Queue according to it and returns a pointer to the Queue. */
-Queue * queue_init(int maxElements)
+/* cratequeue_t function takes argument the maximum number of elements the queue_t can hold, creates
+a queue_t according to it and returns a pointer to the queue_t. */
+void queue_init(queue_t* Q, int maxElements)
 {
-  /* Create a Queue */
-  Queue *Q;
-  memset( Q, 0, sizeof( Queue ) );
-  // Q = (Queue *)malloc(sizeof(Queue));
+  /* Create a queue_t */
+  // memset( Q, 0, sizeof( queue_t ) );
+  // Q = (queue_t *)malloc(sizeof(queue_t));
   /* Initialise its properties */
-  memset( *(Q->elements), 0, sizeof(int)*maxElements );
+  // memset( Q->elements, 0, sizeof(int)*10 );
   // Q->elements = (int *)malloc(sizeof(int)*maxElements);
-  Q->size = 0;
-  Q->capacity = maxElements;
-  Q->front = 0;
-  Q->rear = -1;
+  
   /* Return the pointer */
-  return Q;
+
 }
-void queue_remove(Queue *Q)
+void queue_remove(queue_t *Q)
 {
-  /* If Queue size is zero then it is empty. So we cannot pop */
+  /* If queue_t size is zero then it is empty. So we cannot pop */
   if(Q->size==0)
   {
-    // printf("Queue is Empty\n");
+    // printf("queue_t is Empty\n");
     return;
   }
   /* Removing an element is equivalent to incrementing index of front by one */
@@ -38,11 +34,11 @@ void queue_remove(Queue *Q)
   }
   return;
 }
-void queue_remove_end(Queue *Q){
-  /* If Queue size is zero then it is empty. So we cannot pop */
+void queue_remove_end(queue_t *Q){
+  /* If queue_t size is zero then it is empty. So we cannot pop */
   if(Q->size==0)
   {
-    // printf("Queue is Empty\n");
+    // printf("queue_t is Empty\n");
     return;
   }
   /* Removing an element is equivalent to incrementing index of front by one */
@@ -58,26 +54,26 @@ void queue_remove_end(Queue *Q){
   }
   return;
 }
-int queue_front(Queue *Q){
+int queue_front(queue_t *Q){
   if(Q->size==0){
-    // printf("Queue is Empty\n");
+    // printf("queue_t is Empty\n");
 
   }
   /* Return the element which is at the front*/
   return Q->elements[Q->front];
 }
-int queue_back(Queue *Q){
+int queue_back(queue_t *Q){
   if(Q->size==0){
-    // printf("Queue is Empty\n");
+    // printf("queue_t is Empty\n");
   }
   return Q->elements[Q->rear];
 }
-void queue_add(Queue *Q,int element)
+void queue_add(queue_t *Q,int element)
 {
-  /* If the Queue is full, we cannot push an element into it as there is no space for it.*/
+  /* If the queue_t is full, we cannot push an element into it as there is no space for it.*/
   if(Q->size == Q->capacity)
   {
-    // printf("Queue is Full\n");
+    // printf("queue_t is Full\n");
   }
   else
   {
@@ -95,7 +91,7 @@ void queue_add(Queue *Q,int element)
 }
 // int queue_main()
 // {
-//   Queue *Q = queue_init(5);
+//   queue_t *Q = queue_init(5);
 //   queue_add(Q,1);
 //   queue_add(Q,2);
 //   queue_add(Q,3);
