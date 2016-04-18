@@ -18,7 +18,12 @@ void PDef() {
     // PL011_putc( UART0, return_char );
     char return_string[256] = "";
     read_line(return_string);
-    write_str("\n");
+    if (return_string == "fork"){
+      lib_fork();
+    } else if (return_string == "exit"){
+      lib_exit();
+    }
+    write_str("\n Respinse: ");
     write_str(return_string);
     write_str("\n");
   }

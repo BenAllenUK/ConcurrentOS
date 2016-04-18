@@ -25,4 +25,7 @@ char read_c();
 
 void read_line(char *string_from_buffer);
 
+void lib_fork();
+void lib_exit();
+
 #endif

@@ -5,24 +5,16 @@ queue_t pcb_queue;
 queue_t input_request_queue;
 queue_t user_input_queue;
 
-int time_slices_left = 0;
+
 
 void scheduler( ctx_t* ctx ) {
-  if(time_slices_left == 0) {
-    // Switch process
-    int current_pid = pcb[ fifo_peek(&pcb_queue) ].pid;
-
-    // Save and then add back to queue at the end
-    memcpy( &pcb[ fifo_pop(&pcb_queue) ].ctx, ctx, sizeof( ctx_t ) );
-    fifo_push(&pcb_queue, current_pid);
-
+  if(core_process_finished()) {
+    core_save(&pcb_queue,  pcb, ctx);
     // Copy in the new proccesor
-    memcpy( ctx, &pcb[ fifo_peek(&pcb_queue) ].ctx, sizeof( ctx_t ) );
-
-    time_slices_left = pcb[ fifo_peek(&pcb_queue) ].stats.priority;
+    core_new(&pcb_queue,  pcb, ctx);
   } else {
     // Continue with current process
-    time_slices_left--;
+    core_decrease_time();
   }
 }
 
@@ -79,8 +71,7 @@ void kernel_handler_rst( ctx_t* ctx              ) {
    * restored (i.e., executed) when the function then returns.
    */
 
-  memcpy( ctx, &pcb[ fifo_peek(&pcb_queue) ].ctx, sizeof( ctx_t ) );
-  time_slices_left = pcb[ fifo_pop(&pcb_queue) ].stats.priority;
+  core_new(&pcb_queue,  pcb, ctx);
 
   TIMER0->Timer1Load     = TIMER_INTERVAL; // select period = 2^20 ticks ~= 1 sec
   TIMER0->Timer1Ctrl     = 0x00000002; // select 32-bit   timer
@@ -97,8 +88,6 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   UART0->CR              = 0x00000301; // enable UART (Tx+Rx)
 
   irq_enable();
-
-
 
   return;
 }
@@ -146,6 +135,16 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
         ctx->gpr[ 0 ] = '0';
       }
 
+      break;
+    }
+    case 0x10 : { // Fork
+      core_save(&pcb_queue,  pcb, ctx);
+      core_fork(&pcb_queue, pcb);
+      break;
+    }
+    case 0x11 : { // Exit
+      core_save(&pcb_queue, pcb, ctx);
+      core_exit(&pcb_queue, pcb);
       break;
     }
     default   : { // unknown

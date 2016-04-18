@@ -11,6 +11,14 @@ void yield() {
   asm volatile( "svc #0     \n"  );
 }
 
+
+void lib_fork(){
+  asm volatile( "svc #10     \n"  );
+}
+void lib_exit(){
+  asm volatile( "svc #11     \n"  );
+}
+
 int write( int fd, void* x, size_t n ) {
   int r;
 
@@ -42,13 +50,10 @@ char read_char() {
 }
 void read_line(char *string_from_buffer) {
   char termination_char = '\r';
-
   asm volatile( "svc #2     \n");
-
   int is_waiting_for_char = 1;
   while(is_waiting_for_char) {
     char return_char;
-
     asm volatile("svc #3     \n"
                   "mov %0, r0 \n"
                 : "=r" (return_char));
@@ -56,9 +61,7 @@ void read_line(char *string_from_buffer) {
         // Do nothing
     } else if(return_char == termination_char){
       is_waiting_for_char = 0;
-
     } else {
-      
       append_char(string_from_buffer, return_char);
     }
   }
