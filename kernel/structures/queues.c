@@ -13,6 +13,11 @@ void queue_init(queue_t* Q, int maxElements)
   /* Return the pointer */
 
 }
+
+int queue_size(queue_t *Q){
+  return Q->size;
+}
+
 void queue_remove(queue_t *Q)
 {
   /* If queue_t size is zero then it is empty. So we cannot pop */

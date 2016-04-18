@@ -1,5 +1,10 @@
 #include "lifo.h"
 
+int lifo_size(queue_t* lifo){
+  return queue_size(lifo);
+}
+
+
 queue_t* lifo_init(queue_t* lifo){
   memset( lifo, 0, sizeof( queue_t ) );
   lifo->size = 0;

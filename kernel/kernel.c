@@ -2,13 +2,13 @@
 
 pcb_t pcb[ MAX_PROCCESORS ], *current = NULL;
 queue_t pcb_queue;
+queue_t input_request_queue;
+queue_t user_input_queue;
 
-
-int timeSlicesLeft = 0;
-
+int time_slices_left = 0;
 
 void scheduler( ctx_t* ctx ) {
-  if(timeSlicesLeft == 0) {
+  if(time_slices_left == 0) {
     // Switch process
     int current_pid = pcb[ fifo_peek(&pcb_queue) ].pid;
 
@@ -19,11 +19,10 @@ void scheduler( ctx_t* ctx ) {
     // Copy in the new proccesor
     memcpy( ctx, &pcb[ fifo_peek(&pcb_queue) ].ctx, sizeof( ctx_t ) );
 
-
-    timeSlicesLeft = pcb[ fifo_peek(&pcb_queue) ].stats.priority;
+    time_slices_left = pcb[ fifo_peek(&pcb_queue) ].stats.priority;
   } else {
     // Continue with current process
-    timeSlicesLeft--;
+    time_slices_left--;
   }
 }
 
@@ -37,7 +36,8 @@ void kernel_handler_rst( ctx_t* ctx              ) {
    */
 
   fifo_init(&pcb_queue);
-
+  fifo_init(&input_request_queue);
+  fifo_init(&user_input_queue);
 
   memset( &pcb[ 0 ], 0, sizeof( pcb_t ) );
   pcb[ 0 ].pid      = 0;
@@ -55,7 +55,7 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
   pcb[ 1 ].stats.priority = 1;
   pcb[ 1 ].stats.parentId = 0;
-  fifo_push(&pcb_queue, 1);
+  // fifo_push(&pcb_queue, 1);
 
   memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
   pcb[ 2 ].pid      = 2;
@@ -64,7 +64,7 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
   pcb[ 2 ].stats.priority = 1;
   pcb[ 2 ].stats.parentId = 0;
-  fifo_push(&pcb_queue, 2);
+  // fifo_push(&pcb_queue, 2);
 
   memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
   pcb[ 3 ].pid      = 3;
@@ -73,14 +73,14 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
   pcb[ 3 ].stats.priority = 1;
   pcb[ 3 ].stats.parentId = 0;
-  fifo_push(&pcb_queue, 3);
+  // fifo_push(&pcb_queue, 3);
 
   /* Once the PCBs are initialised, we (arbitrarily) select one to be
    * restored (i.e., executed) when the function then returns.
    */
 
   memcpy( ctx, &pcb[ fifo_peek(&pcb_queue) ].ctx, sizeof( ctx_t ) );
-  timeSlicesLeft = pcb[ fifo_pop(&pcb_queue) ].stats.priority;
+  time_slices_left = pcb[ fifo_pop(&pcb_queue) ].stats.priority;
 
   TIMER0->Timer1Load     = TIMER_INTERVAL; // select period = 2^20 ticks ~= 1 sec
   TIMER0->Timer1Ctrl     = 0x00000002; // select 32-bit   timer
@@ -131,6 +131,23 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
       ctx->gpr[ 0 ] = n;
       break;
     }
+    case 0x02 : { // read request
+      int current_pid = pcb[ fifo_peek(&pcb_queue) ].pid;
+      fifo_push(&input_request_queue, current_pid);
+      break;
+    }
+    case 0x03 : { // read check for response
+      int queueSize = fifo_size(&user_input_queue);
+
+      if (queueSize > 0) {
+        int char_entered = fifo_pop(&user_input_queue);
+        ctx->gpr[ 0 ] = char_entered;
+      } else {
+        ctx->gpr[ 0 ] = '0';
+      }
+
+      break;
+    }
     default   : { // unknown
       break;
     }
@@ -150,14 +167,8 @@ void kernel_handler_irq(ctx_t* ctx, uint32_t id_s) {
     TIMER0->Timer1IntClr = 0x01;
   } else if( id == GIC_SOURCE_UART0 ) {
     uint8_t x = PL011_getc( UART0 );
-    // PL011_putc( UART0, 'K' );
-    // PL011_putc( UART0, '<' );
-    // PL011_putc( UART0,  x  );
-    // PL011_putc( UART0, '>' );
-    // PL011_putc( UART0, '\n' );
-    // PL011_putc( UART0, '\n' );
-    // PL011_putc( UART0, '\n' );
-    // PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );PL011_putc( UART0, '\n' );
+    fifo_push(&user_input_queue, x);
+    PL011_putc( UART0, x );
 
     UART0->ICR = 0x10;
   } else {

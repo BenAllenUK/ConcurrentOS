@@ -1,4 +1,12 @@
 #include "libc.h"
+
+void append_char(char* s, char c)
+{
+        int len = strlen(s);
+        s[len] = c;
+        s[len+1] = '\0';
+}
+
 void yield() {
   asm volatile( "svc #0     \n"  );
 }
@@ -16,6 +24,45 @@ int write( int fd, void* x, size_t n ) {
               : "r0", "r1", "r2" );
 
   return r;
+}
+char read_char() {
+  char return_char;
+  asm volatile( "svc #2     \n");
+
+  int is_waiting_for_char = 1;
+  while(is_waiting_for_char) {
+    asm volatile("svc #3     \n"
+                  "mov %0, r0 \n"
+                : "=r" (return_char));
+    if(return_char != '0'){
+      is_waiting_for_char = 0;
+    }
+  }
+  return return_char;
+}
+void read_line(char *string_from_buffer) {
+  char termination_char = '\r';
+
+  asm volatile( "svc #2     \n");
+
+  int is_waiting_for_char = 1;
+  while(is_waiting_for_char) {
+    char return_char;
+
+    asm volatile("svc #3     \n"
+                  "mov %0, r0 \n"
+                : "=r" (return_char));
+    if(return_char == '0'){
+        // Do nothing
+    } else if(return_char == termination_char){
+      is_waiting_for_char = 0;
+
+    } else {
+      
+      append_char(string_from_buffer, return_char);
+    }
+  }
+  return;
 }
 const static uint32_t i32_tab[10] = {
            1u,
@@ -57,6 +104,6 @@ void int_to_string(char* out, int in) {
   char rChar = in + '0';
   out = &rChar;
 }
-void writeString(char *string){
+void write_str(char *string){
   write( 0, string, strlen(string));
 }

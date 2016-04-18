@@ -27,14 +27,14 @@ void P1() {
         uint32_to_string(yAsString, y);
         uint32_to_string(rAsString, r);
 
-        writeString("P1: ");
-        writeString("gcd( ");
-        writeString(xAsString);
-        writeString(", ");
-        writeString(yAsString);
-        writeString(" ) = ");
-        writeString(rAsString);
-        writeString("\n");
+        write_str("P1: ");
+        write_str("gcd( ");
+        write_str(xAsString);
+        write_str(", ");
+        write_str(yAsString);
+        write_str(" ) = ");
+        write_str(rAsString);
+        write_str("\n");
       }
     }
   }

@@ -18,5 +18,5 @@ queue_t* lifo_init();
 int lifo_peek(queue_t* lifo);
 void lifo_push(queue_t* lifo,int number);
 int lifo_pop(queue_t* lifo);
-
+int lifo_size(queue_t* lifo);
 #endif

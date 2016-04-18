@@ -22,12 +22,12 @@ void P2() {
       uint32_to_string(xAsString, x);
       uint32_to_string(rAsString, r);
 
-      writeString("P2: ");
-      writeString("weight( ");
-      writeString(xAsString);
-      writeString(" ) = ");
-      writeString(rAsString);
-      writeString("\n");
+      write_str("P2: ");
+      write_str("weight( ");
+      write_str(xAsString);
+      write_str(" ) = ");
+      write_str(rAsString);
+      write_str("\n");
 
     }
   }

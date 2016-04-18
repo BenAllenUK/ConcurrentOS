@@ -13,9 +13,14 @@ void PDef() {
     // int r1 = lifo_pop(lifo);
     // int r2 = lifo_pop(lifo);
     // PL011_putc( UART0, r1 + '0' );
-    // PL011_putc( UART0, r1 + ' ' );
-    // PL011_putc( UART0, r2 + '0' );
-    PL011_putc( UART0, 'a' );
+    // PL011_putc( UART0, ' ' );
+
+    // PL011_putc( UART0, return_char );
+    char return_string[256] = "";
+    read_line(return_string);
+    write_str("\n");
+    write_str(return_string);
+    write_str("\n");
   }
 
   return;

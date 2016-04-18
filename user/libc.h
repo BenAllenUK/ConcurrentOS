@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "PL011.h"
 // cooperatively yield control of processor, i.e., invoke the scheduler
 void yield();
 
@@ -19,6 +19,10 @@ void uint32_to_string(char *out, uint32_t in);
 
 void int_to_string(char *out, int in);
 
-void writeString(char *string);
+void write_str(char *string);
+
+char read_c();
+
+void read_line(char *string_from_buffer);
 
 #endif

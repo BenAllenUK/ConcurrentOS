@@ -1,5 +1,9 @@
 #include "fifo.h"
 
+int fifo_size(queue_t* fifo){
+  return queue_size(fifo);
+}
+
 queue_t* fifo_init(queue_t* fifo){
   memset( fifo, 0, sizeof( queue_t ) );
   fifo->size = 0;

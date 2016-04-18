@@ -18,5 +18,5 @@ queue_t* fifo_init();
 int fifo_peek(queue_t* fifo);
 void fifo_push(queue_t* fifo,int number);
 int fifo_pop(queue_t* fifo);
-
+int fifo_size(queue_t* lifo);
 #endif

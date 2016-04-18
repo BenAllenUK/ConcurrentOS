@@ -29,12 +29,12 @@ void P0() {
       char *xAsString;
       uint32_to_string(xAsString, x);
 
-      writeString("P0: ");
-      writeString("is_prime( ");
-      writeString(xAsString);
-      writeString(" ) = ");
-      writeString(rAsString);
-      writeString("\n");
+      write_str("P0: ");
+      write_str("is_prime( ");
+      write_str(xAsString);
+      write_str(" ) = ");
+      write_str(rAsString);
+      write_str("\n");
     }
   }
 

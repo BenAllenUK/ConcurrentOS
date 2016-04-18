@@ -28,5 +28,5 @@ void queue_remove_end(queue_t *Q);
 int queue_front(queue_t *Q);
 int queue_end(queue_t *Q);
 void queue_add(queue_t *Q,int element);
-
+int queue_size(queue_t *Q);
 #endif
