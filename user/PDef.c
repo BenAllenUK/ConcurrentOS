@@ -20,14 +20,13 @@ void PDef() {
     read_line(return_string);
 
     if (str_match(return_string,"fork") == 1){
-      PL011_putc( UART0, 'Y' );
       lib_fork();
     } else if (str_match(return_string,"exit") == 1){
       lib_exit();
     }
-    write_str("\n Respinse: ");
-    write_str(return_string);
-    write_str("\n");
+    write_str_raw("\n Entered: ");
+    write_str_raw(return_string);
+    write_str_raw("\n");
   }
 
   return;

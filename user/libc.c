@@ -1,5 +1,5 @@
 #include "libc.h"
-
+int show_display_val = 1;
 void append_char(char* s, char c)
 {
         int len = strlen(s);
@@ -65,6 +65,8 @@ void read_line(char *string_from_buffer) {
       append_char(string_from_buffer, return_char);
     }
   }
+  write_str_raw("\n");
+
   return;
 }
 const static uint32_t i32_tab[10] = {
@@ -107,7 +109,33 @@ void int_to_string(char* out, int in) {
   char rChar = in + '0';
   out = &rChar;
 }
+void show_display(){
+  show_display_val = 1;
+}
+void hide_display(){
+  clear();
+  show_display_val = 0;
+}
 void write_str(char *string){
+  if(show_display_val){
+    write( 0, string, strlen(string));
+  }
+}
+void write_str_raw(char *string){
+  write( 0, string, strlen(string));
+}
+void write_int_raw(int i){
+  char *in;
+  int_to_string(in, i);
+  write( 0, in, strlen(in));
+}
+void write_int(int i){
+  char *in;
+  int_to_string(in, i);
+  write_str(in);
+}
+void clear(){
+  char *string = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
   write( 0, string, strlen(string));
 }
 int str_match(char* input,char* check)

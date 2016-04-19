@@ -7,24 +7,43 @@ int core_process_finished(){
 // void core_init(queue_t *pcb_queue, pcb_t *pcb[]){
 //
 // }
-void core_exit(queue_t *pcb_queue, pcb_t *pcb){
-  int current_pid = fifo_pop(pcb_queue);
-  memset( &pcb[ current_pid ], 0, sizeof( pcb_t ) );
+void core_exit(queue_t *pcb_queue, pcb_t *pcb, int current_focus){
+  // int current_pid = fifo_pop(pcb_queue);
+  // fifo_pop(current_focus);
+
+  // Remove current focus
+  for ( int i = 0; i < fifo_size(pcb_queue); i++ ){
+    int this_element = fifo_pop(pcb_queue);
+    if(this_element != current_focus){
+      fifo_push(pcb_queue, this_element);
+    }
+  }
+
+  memset( &pcb[ current_focus ], 0, sizeof( pcb_t ) );
 }
-void core_fork(queue_t *pcb_queue, pcb_t *pcb){
-  int current_pid = fifo_peek(pcb_queue);
-  int num_pcb = fifo_size(pcb_queue);
+void core_fork(queue_t *pcb_queue, pcb_t *pcb, int current_focus){
+
+  int num_pcb = fifo_size(pcb_queue) + 1;
 
   // Space for another process
-  if((num_pcb + 1) < MAX_PROCCESORS){
+  if(num_pcb < MAX_PROCCESORS){
 
-    pcb[num_pcb] = pcb[current_pid];
-    memcpy( &pcb[num_pcb].ctx, &pcb[current_pid].ctx, sizeof( ctx_t ) );
-    pcb[num_pcb].stats.parentId = current_pid;
-    pcb[num_pcb].stats.priority = pcb[current_pid].stats.priority;
+    pcb[num_pcb] = pcb[current_focus];
+    memcpy( &pcb[num_pcb].ctx, &pcb[current_focus].ctx, sizeof( ctx_t ) );
+    pcb[num_pcb].stats.parentId = current_focus;
+    pcb[num_pcb].stats.priority = pcb[current_focus].stats.priority;
     pcb[num_pcb].pid = num_pcb;
     fifo_push(pcb_queue, num_pcb);
   }
+
+  write_str_raw("Forked process ");
+  char *in;
+  int_to_string(in, current_focus);
+  write_str_raw(in);
+  write_str_raw(" to ");
+  int_to_string(in, num_pcb);
+  write_str_raw(in);
+  write_str_raw("\n");
 }
 
 

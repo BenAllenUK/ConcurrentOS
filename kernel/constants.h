@@ -7,6 +7,7 @@
 
 #define TIMER_INTERVAL 0x00100000
 #define MAX_PROCCESORS 10
+#define SPECIAL_CHAR 'Q'
 
 typedef struct {
   uint32_t cpsr, pc, gpr[ 13 ], sp, lr;

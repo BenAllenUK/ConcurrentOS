@@ -4,8 +4,7 @@ pcb_t pcb[ MAX_PROCCESORS ], *current = NULL;
 queue_t pcb_queue;
 queue_t input_request_queue;
 queue_t user_input_queue;
-
-
+int current_focus = 0;
 
 void scheduler( ctx_t* ctx ) {
   if(core_process_finished()) {
@@ -31,14 +30,14 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   fifo_init(&input_request_queue);
   fifo_init(&user_input_queue);
 
-  memset( &pcb[ 0 ], 0, sizeof( pcb_t ) );
-  pcb[ 0 ].pid      = 0;
-  pcb[ 0 ].ctx.cpsr = 0x50;
-  pcb[ 0 ].ctx.pc   = ( uint32_t )( entry_PDef );
-  pcb[ 0 ].ctx.sp   = ( uint32_t )(  &tos_PDef );
-  pcb[ 0 ].stats.priority = 1;
-  pcb[ 0 ].stats.parentId = 0;
-  fifo_push(&pcb_queue, 0);
+  memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
+  pcb[ 1 ].pid      = 1;
+  pcb[ 1 ].ctx.cpsr = 0x50;
+  pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_PDef );
+  pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_PDef );
+  pcb[ 1 ].stats.priority = 1;
+  pcb[ 1 ].stats.parentId = 1;
+  fifo_push(&pcb_queue, 1);
 
   // memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   // pcb[ 1 ].pid      = 1;
@@ -139,12 +138,12 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
     }
     case 10 : { // Fork
       core_save(&pcb_queue,  pcb, ctx);
-      core_fork(&pcb_queue, pcb);
+      core_fork(&pcb_queue, pcb, current_focus);
       break;
     }
     case 11: { // Exit
       core_save(&pcb_queue, pcb, ctx);
-      core_exit(&pcb_queue, pcb);
+      core_exit(&pcb_queue, pcb, current_focus);
       break;
     }
     default   : { // unknown
@@ -166,8 +165,14 @@ void kernel_handler_irq(ctx_t* ctx, uint32_t id_s) {
     TIMER0->Timer1IntClr = 0x01;
   } else if( id == GIC_SOURCE_UART0 ) {
     uint8_t x = PL011_getc( UART0 );
-    fifo_push(&user_input_queue, x);
-    PL011_putc( UART0, x );
+    if (x == SPECIAL_CHAR){
+      hide_display();
+      write_str_raw("Enter Command: ");
+      current_focus = pcb[ fifo_peek(&pcb_queue) ].pid;
+    } else {
+      fifo_push(&user_input_queue, x);
+      PL011_putc( UART0, x );
+    }
 
     UART0->ICR = 0x10;
   } else {

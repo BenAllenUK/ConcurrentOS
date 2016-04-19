@@ -14,18 +14,22 @@ void yield();
 
 // write n bytes from x to the file descriptor fd
 int write( int fd, void* x, size_t n );
-
+void lib_fork();
+void lib_exit();
 void uint32_to_string(char *out, uint32_t in);
 
 void int_to_string(char *out, int in);
 
 void write_str(char *string);
-
-char read_c();
+void write_int_raw(int i);
+void write_str_raw(char *string);
+void write_int(int i);
+char read_char();
+void clear();
+int str_match(char* input,char* check);
+void show_display();
+void hide_display();
 
 void read_line(char *string_from_buffer);
 
-void lib_fork();
-void lib_exit();
-int str_match(char* input,char* check);
 #endif
