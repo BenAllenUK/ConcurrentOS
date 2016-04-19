@@ -110,3 +110,19 @@ void int_to_string(char* out, int in) {
 void write_str(char *string){
   write( 0, string, strlen(string));
 }
+int str_match(char* input,char* check)
+{
+
+int i;
+int result=1;
+for(i=0;input[i]!='\0' && check[i]!='\0';i++){
+  if(input[i] != check[i]){
+    result=0;
+
+    break;
+  }
+
+  }
+
+ return result;
+ }

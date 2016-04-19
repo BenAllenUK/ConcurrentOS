@@ -40,31 +40,31 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 0 ].stats.parentId = 0;
   fifo_push(&pcb_queue, 0);
 
-  memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
-  pcb[ 1 ].pid      = 1;
-  pcb[ 1 ].ctx.cpsr = 0x50;
-  pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_P0 );
-  pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
-  pcb[ 1 ].stats.priority = 1;
-  pcb[ 1 ].stats.parentId = 0;
-  // fifo_push(&pcb_queue, 1);
-
-  memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
-  pcb[ 2 ].pid      = 2;
-  pcb[ 2 ].ctx.cpsr = 0x50;
-  pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
-  pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
-  pcb[ 2 ].stats.priority = 1;
-  pcb[ 2 ].stats.parentId = 0;
-  // fifo_push(&pcb_queue, 2);
-
-  memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
-  pcb[ 3 ].pid      = 3;
-  pcb[ 3 ].ctx.cpsr = 0x50;
-  pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
-  pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
-  pcb[ 3 ].stats.priority = 1;
-  pcb[ 3 ].stats.parentId = 0;
+  // memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
+  // pcb[ 1 ].pid      = 1;
+  // pcb[ 1 ].ctx.cpsr = 0x50;
+  // pcb[ 1 ].ctx.pc   = ( uint32_t )( entry_P0 );
+  // pcb[ 1 ].ctx.sp   = ( uint32_t )(  &tos_P0 );
+  // pcb[ 1 ].stats.priority = 1;
+  // pcb[ 1 ].stats.parentId = 0;
+  // // fifo_push(&pcb_queue, 1);
+  //
+  // memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
+  // pcb[ 2 ].pid      = 2;
+  // pcb[ 2 ].ctx.cpsr = 0x50;
+  // pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
+  // pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
+  // pcb[ 2 ].stats.priority = 1;
+  // pcb[ 2 ].stats.parentId = 0;
+  // // fifo_push(&pcb_queue, 2);
+  //
+  // memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
+  // pcb[ 3 ].pid      = 3;
+  // pcb[ 3 ].ctx.cpsr = 0x50;
+  // pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
+  // pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
+  // pcb[ 3 ].stats.priority = 1;
+  // pcb[ 3 ].stats.parentId = 0;
   // fifo_push(&pcb_queue, 3);
 
   /* Once the PCBs are initialised, we (arbitrarily) select one to be
@@ -137,12 +137,12 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
 
       break;
     }
-    case 0x10 : { // Fork
+    case 10 : { // Fork
       core_save(&pcb_queue,  pcb, ctx);
       core_fork(&pcb_queue, pcb);
       break;
     }
-    case 0x11 : { // Exit
+    case 11: { // Exit
       core_save(&pcb_queue, pcb, ctx);
       core_exit(&pcb_queue, pcb);
       break;

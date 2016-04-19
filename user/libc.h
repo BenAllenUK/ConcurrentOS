@@ -27,5 +27,5 @@ void read_line(char *string_from_buffer);
 
 void lib_fork();
 void lib_exit();
-
+int str_match(char* input,char* check);
 #endif
