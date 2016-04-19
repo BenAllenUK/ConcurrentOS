@@ -31,5 +31,5 @@ void show_display();
 void hide_display();
 
 void read_line(char *string_from_buffer);
-
+int get_channel_id_to(int pid);
 #endif

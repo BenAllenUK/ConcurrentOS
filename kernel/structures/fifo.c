@@ -18,9 +18,14 @@ int fifo_peek(queue_t* fifo){
 }
 
 int fifo_pop(queue_t* fifo){
-  int front = queue_front(fifo);
-  queue_remove(fifo);
-  return front;
+  if(queue_size(fifo) > 0){
+    int front = queue_front(fifo);
+    queue_remove(fifo);
+    return front;
+  } else {
+    return -1;
+  }
+
 }
 
 void fifo_push(queue_t* fifo,int number){

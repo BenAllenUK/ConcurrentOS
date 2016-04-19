@@ -37,7 +37,7 @@ launch-qemu : ${PROJECT_TARGETS}
 	@${QEMU_PATH}/qemu-system-arm -M realview-pb-a8 -m 128M -display none -gdb tcp:${QEMU_GDB} $(addprefix -serial , ${QEMU_UART}) -S -kernel $(filter %.bin, ${PROJECT_TARGETS})
 
 launch-gdb  : ${PROJECT_TARGETS}
-	@${GCC_PATH}/bin/${GCC_PREFIX}-gdb -tui -ex "file $(filter %.elf, ${PROJECT_TARGETS})" -ex "target remote ${QEMU_GDB}"
+	@${GCC_PATH}/bin/${GCC_PREFIX}-gdb -ex "file $(filter %.elf, ${PROJECT_TARGETS})" -ex "target remote ${QEMU_GDB}"
 
 kill-qemu   :
 	@-killall -u ${USER} qemu-system-arm > /dev/null 2>&1 || true

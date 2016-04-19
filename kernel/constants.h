@@ -7,6 +7,7 @@
 
 #define TIMER_INTERVAL 0x00100000
 #define MAX_PROCCESORS 10
+#define MAX_CHANNELS 10
 #define ENTRY_CHAR 'Q'
 #define EXIT_CHAR 'E'
 

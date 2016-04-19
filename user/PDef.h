@@ -6,6 +6,7 @@
 
 #include "libc.h"
 #include "PL011.h"
+#include "ipc.h"
 
 #include "structures/lifo.h"
 

@@ -13,12 +13,22 @@ void yield() {
 
 
 void lib_fork(){
-  asm volatile( "svc #10     \n"  );
+  asm volatile( "svc #5     \n"  );
 }
 void lib_exit(){
-  asm volatile( "svc #11     \n"  );
+  asm volatile( "svc #6     \n"  );
 }
+int get_channel_id_to(int pid){
+  int chan_id;
+  asm volatile( "mov r0, %1 \n"
+                "svc #4     \n"
+                "mov %0, r0 \n"
+              : "=r" (chan_id)
+              : "r" (pid)
+              : "r0");
 
+  return chan_id;
+}
 int write( int fd, void* x, size_t n ) {
   int r;
 
@@ -42,7 +52,7 @@ char read_char() {
     asm volatile("svc #3     \n"
                   "mov %0, r0 \n"
                 : "=r" (return_char));
-    if(return_char != '0'){
+    if(return_char != -1){
       is_waiting_for_char = 0;
     }
   }
@@ -59,7 +69,7 @@ void read_line(char *string_from_buffer) {
                 : "=r" (return_char));
     if(return_char == '0'){
         // Do nothing
-    } else if(return_char == termination_char){
+    } else if(return_char == termination_char && string_from_buffer[0] != '\0'){
       is_waiting_for_char = 0;
     } else {
       append_char(string_from_buffer, return_char);
@@ -141,7 +151,9 @@ void clear(){
 }
 int str_match(char* input,char* check)
 {
-
+  if (input[0] == '\0'){
+    return 0;
+  }
 int i;
 int result=1;
 for(i=0;input[i]!='\0' && check[i]!='\0';i++){

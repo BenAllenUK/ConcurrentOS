@@ -30,6 +30,8 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   fifo_init(&input_request_queue);
   fifo_init(&user_input_queue);
 
+  ipc_init(2,3);
+
   memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   pcb[ 1 ].pid      = 1;
   pcb[ 1 ].ctx.cpsr = 0x50;
@@ -49,21 +51,21 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   // pcb[ 1 ].stats.parentId = 0;
   // // fifo_push(&pcb_queue, 1);
   //
-  // memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
-  // pcb[ 2 ].pid      = 2;
-  // pcb[ 2 ].ctx.cpsr = 0x50;
-  // pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
-  // pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
-  // pcb[ 2 ].stats.priority = 1;
-  // pcb[ 2 ].stats.parentId = 0;
-  // fifo_push(&pcb_queue, 2);
-  //
+  memset( &pcb[ 2 ], 0, sizeof( pcb_t ) );
+  pcb[ 2 ].pid      = 2;
+  pcb[ 2 ].ctx.cpsr = 0x50;
+  pcb[ 2 ].ctx.pc   = ( uint32_t )( entry_P1 );
+  pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
+  pcb[ 2 ].stats.priority = 5;
+  pcb[ 2 ].stats.parentId = 0;
+  fifo_push(&pcb_queue, 2);
+
   memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
   pcb[ 3 ].pid      = 3;
   pcb[ 3 ].ctx.cpsr = 0x50;
   pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
   pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
-  pcb[ 3 ].stats.priority = 1;
+  pcb[ 3 ].stats.priority = 10;
   pcb[ 3 ].stats.parentId = 0;
   fifo_push(&pcb_queue, 3);
 
@@ -134,15 +136,25 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
       } else {
         ctx->gpr[ 0 ] = '0';
       }
+      break;
+    }
 
+    case 0x04: { // Get channel between here and x
+      int to_pid = (int)(ctx->gpr[ 0 ]);
+      int current_pid = pcb[ fifo_peek(&pcb_queue) ].pid;
+      int chan_id = ipc_get_channel_id(to_pid, current_pid);
+      if(chan_id != -1){
+        ctx->gpr[ 0 ] = chan_id;
+      }
       break;
     }
-    case 10 : { // Fork
+
+    case 0x05 : { // Fork
       core_save(&pcb_queue,  pcb, ctx);
-      core_fork(&pcb_queue, pcb, current_focus);
+      // core_fork(&pcb_queue, pcb, current_focus);
       break;
     }
-    case 11: { // Exit
+    case 0x06: { // Exit
       core_save(&pcb_queue, pcb, ctx);
       core_exit(&pcb_queue, pcb, current_focus);
       current_focus = 0;

@@ -18,6 +18,7 @@
 
 #include "constants.h"
 #include "core.h"
+#include "ipc.h"
 
 // Include definitions relating to the 2 user programs.
 

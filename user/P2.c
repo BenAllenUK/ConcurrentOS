@@ -13,6 +13,9 @@ uint32_t weight( uint32_t x ) {
 void P2() {
   int num = 0;
   int count = 0;
+
+  int chan = get_channel_id_to(2);
+
   while( 1 ) {
     // compute the Hamming weight of each x for 2^8 < x < 2^24
     num++;
@@ -31,6 +34,13 @@ void P2() {
     uint32_to_string(rAsString, num);
     write_str(rAsString);
     write_str("\n");
+
+    if(num > 200000){
+      write_str("Pushing");
+      ipc_push(chan, 2, 10);
+      num = 0;
+    }
+
     // for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
     //   uint32_t r = weight( x );  // printf( "weight( %d ) = %d\n", x, r );
     //
