@@ -10,16 +10,22 @@ int core_process_finished(){
 void core_exit(queue_t *pcb_queue, pcb_t *pcb, int current_focus){
   // int current_pid = fifo_pop(pcb_queue);
   // fifo_pop(current_focus);
-
-  // Remove current focus
-  for ( int i = 0; i < fifo_size(pcb_queue); i++ ){
-    int this_element = fifo_pop(pcb_queue);
-    if(this_element != current_focus){
-      fifo_push(pcb_queue, this_element);
+  if (current_focus != 1) {
+    // Remove current focus
+    for ( int i = 0; i < fifo_size(pcb_queue); i++ ){
+      int this_element = fifo_pop(pcb_queue);
+      if(this_element != current_focus){
+        fifo_push(pcb_queue, this_element);
+      }
     }
+    memset( &pcb[ current_focus ], 0, sizeof( pcb_t ) );
+    clear();
+    write_str_raw("Exited process\n");
+    show_display();
+  } else {
+    clear();
+    show_display();
   }
-
-  memset( &pcb[ current_focus ], 0, sizeof( pcb_t ) );
 }
 void core_fork(queue_t *pcb_queue, pcb_t *pcb, int current_focus){
 
@@ -34,16 +40,15 @@ void core_fork(queue_t *pcb_queue, pcb_t *pcb, int current_focus){
     pcb[num_pcb].stats.priority = pcb[current_focus].stats.priority;
     pcb[num_pcb].pid = num_pcb;
     fifo_push(pcb_queue, num_pcb);
-  }
 
-  write_str_raw("Forked process ");
-  char *in;
-  int_to_string(in, current_focus);
-  write_str_raw(in);
-  write_str_raw(" to ");
-  int_to_string(in, num_pcb);
-  write_str_raw(in);
-  write_str_raw("\n");
+    write_str_raw("Forked process ");
+    PL011_putc( UART0, current_focus + '0' );
+    write_str_raw(" to ");
+    PL011_putc( UART0, num_pcb  + '0');
+    write_str_raw("\n");
+  } else {
+    write_str_raw("Process not forked - max limit reached");
+  }
 }
 
 

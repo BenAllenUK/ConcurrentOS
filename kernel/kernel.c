@@ -38,6 +38,7 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   pcb[ 1 ].stats.priority = 1;
   pcb[ 1 ].stats.parentId = 1;
   fifo_push(&pcb_queue, 1);
+  current_focus = 1;
 
   // memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   // pcb[ 1 ].pid      = 1;
@@ -55,16 +56,16 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   // pcb[ 2 ].ctx.sp   = ( uint32_t )(  &tos_P1 );
   // pcb[ 2 ].stats.priority = 1;
   // pcb[ 2 ].stats.parentId = 0;
-  // // fifo_push(&pcb_queue, 2);
+  // fifo_push(&pcb_queue, 2);
   //
-  // memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
-  // pcb[ 3 ].pid      = 3;
-  // pcb[ 3 ].ctx.cpsr = 0x50;
-  // pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
-  // pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
-  // pcb[ 3 ].stats.priority = 1;
-  // pcb[ 3 ].stats.parentId = 0;
-  // fifo_push(&pcb_queue, 3);
+  memset( &pcb[ 3 ], 0, sizeof( pcb_t ) );
+  pcb[ 3 ].pid      = 3;
+  pcb[ 3 ].ctx.cpsr = 0x50;
+  pcb[ 3 ].ctx.pc   = ( uint32_t )( entry_P2 );
+  pcb[ 3 ].ctx.sp   = ( uint32_t )(  &tos_P2 );
+  pcb[ 3 ].stats.priority = 1;
+  pcb[ 3 ].stats.parentId = 0;
+  fifo_push(&pcb_queue, 3);
 
   /* Once the PCBs are initialised, we (arbitrarily) select one to be
    * restored (i.e., executed) when the function then returns.
@@ -144,6 +145,7 @@ void kernel_handler_svc( ctx_t* ctx, uint32_t id ) {
     case 11: { // Exit
       core_save(&pcb_queue, pcb, ctx);
       core_exit(&pcb_queue, pcb, current_focus);
+      current_focus = 0;
       break;
     }
     default   : { // unknown
@@ -165,11 +167,13 @@ void kernel_handler_irq(ctx_t* ctx, uint32_t id_s) {
     TIMER0->Timer1IntClr = 0x01;
   } else if( id == GIC_SOURCE_UART0 ) {
     uint8_t x = PL011_getc( UART0 );
-    if (x == SPECIAL_CHAR){
+    if (x == ENTRY_CHAR){
       hide_display();
-      write_str_raw("Enter Command: ");
       current_focus = pcb[ fifo_peek(&pcb_queue) ].pid;
-    } else {
+      write_str_raw("Enter Command: ");
+    } else if (x == EXIT_CHAR){
+      show_display();
+    } else if(current_focus != 0) {
       fifo_push(&user_input_queue, x);
       PL011_putc( UART0, x );
     }

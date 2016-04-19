@@ -110,6 +110,7 @@ void int_to_string(char* out, int in) {
   out = &rChar;
 }
 void show_display(){
+  clear();
   show_display_val = 1;
 }
 void hide_display(){

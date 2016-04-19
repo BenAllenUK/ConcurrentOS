@@ -11,25 +11,42 @@ uint32_t weight( uint32_t x ) {
 }
 
 void P2() {
+  int num = 0;
+  int count = 0;
   while( 1 ) {
     // compute the Hamming weight of each x for 2^8 < x < 2^24
+    num++;
 
-    for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
-      uint32_t r = weight( x );  // printf( "weight( %d ) = %d\n", x, r );
-
-      char *xAsString;
-      char *rAsString;
-      uint32_to_string(xAsString, x);
-      uint32_to_string(rAsString, r);
-
-      write_str("P2: ");
-      write_str("weight( ");
-      write_str(xAsString);
-      write_str(" ) = ");
-      write_str(rAsString);
-      write_str("\n");
-
+    if(num > 7983590){
+      num = 0;
+      count++;
     }
+    char *rAsString;
+
+
+    write_str("P2: ");
+    uint32_to_string(rAsString, count);
+    write_str(rAsString);
+    write_str(" ");
+    uint32_to_string(rAsString, num);
+    write_str(rAsString);
+    write_str("\n");
+    // for( uint32_t x = ( 1 << 8 ); x < ( 1 << 24 ); x++ ) {
+    //   uint32_t r = weight( x );  // printf( "weight( %d ) = %d\n", x, r );
+    //
+    //   char *xAsString;
+    //   char *rAsString;
+    //   uint32_to_string(xAsString, x);
+    //   uint32_to_string(rAsString, r);
+    //
+    //   write_str("P2: ");
+    //   write_str("weight( ");
+    //   write_str(xAsString);
+    //   write_str(" ) = ");
+    //   write_str(rAsString);
+    //   write_str("\n");
+    //
+    // }
   }
 
   return;
