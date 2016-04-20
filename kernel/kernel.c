@@ -18,15 +18,7 @@ void scheduler( ctx_t* ctx ) {
 }
 
 void kernel_handler_rst( ctx_t* ctx              ) {
-  /* Initialise PCBs representing processes stemming from execution of
-   * the two user programs.  Note in each case that
-   *
-   * - the CPSR value of 0x50 means the processor is switched into USR
-   *   mode, with IRQ interrupts enabled, and
-   * - the PC and SP values matche the entry point and top of stack.
-   */
-
-
+  files_init(); 
 
   fifo_init(&pcb_queue);
   fifo_init(&input_request_queue);

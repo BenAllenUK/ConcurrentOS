@@ -20,6 +20,7 @@
 #include "core.h"
 #include "ipc.h"
 #include "disk.h"
+#include "filesys.h"
 
 // Include definitions relating to the 2 user programs.
 
