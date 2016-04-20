@@ -19,6 +19,7 @@
 #include "constants.h"
 #include "core.h"
 #include "ipc.h"
+#include "disk.h"
 
 // Include definitions relating to the 2 user programs.
 
@@ -26,7 +27,7 @@
 #include "P1.h"
 #include "P2.h"
 #include "PDef.h"
-
+#include "libc.h"
 /* The kernel source code is made simpler by three type definitions:
  *
  * - a type that captures each component of an execution context (i.e.,

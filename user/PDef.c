@@ -5,6 +5,16 @@ void PDef() {
   int x = 0;
   // queue_t *lifo;
   // lifo_init(lifo);
+  write_str("Outputting blocknum:");
+  int block_num = disk_get_block_num();
+  char *str;
+  uint32_to_string(str, block_num);
+  write_str(str); write_str("\n");
+
+  write_str("Outputting blocklen:");
+  int block_len = disk_get_block_len();
+  uint32_to_string(str, block_len);
+  write_str(str);
 
   int chanToThree = get_channel_id_to(3);
   PL011_putc( UART0, chanToThree + '0' );

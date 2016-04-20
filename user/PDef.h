@@ -9,7 +9,7 @@
 #include "ipc.h"
 
 #include "structures/lifo.h"
-
+#include "disk.h"
 
 // define symbols for P1 entry point and top of stack
 extern void (*entry_PDef)();
