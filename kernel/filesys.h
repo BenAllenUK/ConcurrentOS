@@ -18,6 +18,7 @@ typedef struct {
   int a;
   int b;
   int c;
+
 } supernode_t;
 
 typedef struct {

@@ -2,32 +2,50 @@
 supernode_t supnode;
 int next_free_address = 0;
 int next_free_id = 0;
+inode_t root_node;
+
+
 int write_object(void *object, int size, int addresses[], int fromAddr){
-    char buffer[size];
-    unsigned char* obj_char= (unsigned char*)object;
-    memset( &buffer, 0, sizeof( buffer ) );
-    const unsigned char *byte;
+  char buffer[size];
+  unsigned char* obj_char= (unsigned char*)object;
+  memset( &buffer, 0, sizeof( buffer ) );
+  const unsigned char *byte;
 
-    // get bytes
-    int pos = 0;
-    int sizeCopy = size;
-    for ( byte = obj_char; sizeCopy--; ++byte ){
-        buffer[pos] = *byte;
-        pos++;
-    }
+  // get bytes
+  int pos = 0;
+  int sizeCopy = size;
+  for ( byte = obj_char; sizeCopy--; ++byte ){
+      buffer[pos] = *byte;
+      pos++;
+  }
 
-    // Number of blocks
-    int addressIncrNum;
-    int block_number = (size % 16) ? ((size / 16) + 1) : (size / 16);
-    for ( int i = 0; i < block_number; i++){
-      disk_wr( fromAddr, (uint8_t*)(&(buffer[ i * 16])), WRITE_SIZE );
-      addresses[i] = fromAddr;
-      fromAddr += ADDRESS_INCREMENT;
-      addressIncrNum += 1;
-    }
-    return addressIncrNum;
+  // Number of blocks
+  int addressIncrNum;
+  int block_number = (size % 16) ? ((size / 16) + 1) : (size / 16);
+  for ( int i = 0; i < block_number; i++){
+    disk_wr( fromAddr, (uint8_t*)(&(buffer[ i * 16])), WRITE_SIZE );
+    addresses[i] = fromAddr;
+    fromAddr += ADDRESS_INCREMENT;
+    addressIncrNum += 1;
+  }
+  return addressIncrNum;
 }
-void createFile(char name[20], int type, int parentId, void* data, int dataSize){
+void read_object(int size, int fromAddr, char buffer[]){
+
+
+
+
+  int addressFrom = fromAddr;
+  int block_number = (size % 16) ? ((size / 16) + 1) : (size / 16);
+  for ( int i = 0; i < block_number; i++){
+    disk_rd( addressFrom, (uint8_t*)(&(buffer[ i * 16 ])), WRITE_SIZE );
+    addressFrom += ADDRESS_INCREMENT;
+  }
+}
+void readFile(char name[20], int parentId, void* dataFile, int dataSize){
+
+}
+int createFile(char name[20], int type, int parentId, void* data, int dataSize){
 
   // Create new inode
   inode_t newnode;
@@ -65,13 +83,23 @@ void createFile(char name[20], int type, int parentId, void* data, int dataSize)
   // Update next free address
   lastAddress = addresses[addressNumInode - 1];
   next_free_address = lastAddress;
+
+  // Add addresses[0] to parent
+  return addresses[0];
 }
+
 
 
 void files_init(){
   char data[20] = "hello";
-  createFile("rootfolder", 2, 0, &data, 20);
 
+  int addr = createFile("rootfolder", 2, 0, &data, 20);
+
+  char response[sizeof(inode_t)];
+  memset( &response, 0, sizeof(inode_t) );
+  read_object(sizeof(inode_t),  addr, response);
+  inode_t newNode = *(inode_t*)response;
+  newNode.type = 0;
     // Init root node
     // inode_t rootnode;
     // memset( &rootnode, 0, sizeof( inode_t ) );
