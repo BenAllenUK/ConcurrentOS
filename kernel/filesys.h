@@ -9,7 +9,7 @@
 #include "../device/disk.h"
 // #include "disk.h"
 #define WRITE_SIZE 16
-#define ADDRESS_INCREMENT 2
+#define ADDRESS_INCREMENT 1
 
 typedef struct {
   int info;
@@ -22,10 +22,13 @@ typedef struct {
 } supernode_t;
 
 typedef struct {
+  char a = '[';
   int datablocks[9];
+  char b = ']';
 } table_t;
 
 typedef struct {
+  char p = '(';
   int id; // 4
   int parentId; // 4
   int type; // 4
@@ -34,6 +37,7 @@ typedef struct {
   table_t *single_table; // 4
   table_t **double_table; // 4
   table_t ***triple_table; // 4
+  char p = ')';
 } inode_t;
 
 
