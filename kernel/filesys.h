@@ -7,10 +7,12 @@
 #include <stdio.h>
 #include "constants.h"
 #include "../device/disk.h"
+
 // #include "disk.h"
 #define WRITE_SIZE 16
 #define ADDRESS_INCREMENT 1
-
+#define TYPE_FILE 1
+#define TYPE_FOLDER 2
 typedef struct {
   int info;
   int other;
@@ -22,13 +24,14 @@ typedef struct {
 } supernode_t;
 
 typedef struct {
-  char a = '[';
+  char s;
   int datablocks[9];
-  char b = ']';
+  int length;
+  char e;
 } table_t;
 
 typedef struct {
-  char p = '(';
+  char s;
   int id; // 4
   int parentId; // 4
   int type; // 4
@@ -37,7 +40,7 @@ typedef struct {
   table_t *single_table; // 4
   table_t **double_table; // 4
   table_t ***triple_table; // 4
-  char p = ')';
+  char e;
 } inode_t;
 
 
