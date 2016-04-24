@@ -90,22 +90,21 @@ int createFile(int address, int id, char name[20], int type, int parentId, void*
   memset( &addresses, 0, sizeof( int ) * 100 );
   if (type == TYPE_FILE){
     // Write object
-
-
     addressNum = write_object(data, dataSize, addresses, address);
     // Set table data to point newly written data
 
     memset( &data_table, 0, sizeof( table_t ) );
-    for (int i = 0; i < 9; i++){
+    for (int i = 0; i < 8; i++){
         data_table.datablocks[i] = addresses[i];
     }
+
   } else if (type == TYPE_FOLDER){
+    addressNum = 8;
     memset( &data_table, 0, sizeof( table_t ) );
     unsigned int* obj_char= (unsigned int*)data;
 
-    for (int i = 0; i < 9; i++){
-        data_table.datablocks[i] = *(int *)data;
-        data++;
+    for (int i = 0; i < 8; i++){
+        data_table.datablocks[i] = *(int *)(data + i * sizeof(int));
     }
   }
 
@@ -124,6 +123,7 @@ int createFile(int address, int id, char name[20], int type, int parentId, void*
 
   return addresses[addressNum + addressNumInode - 1]; // The last address
 }
+// UNUSED
 // void updateDataWithAddress(int folderInode, int newFileInode){
 //   // Read exisiting
 //   inode_t response;
@@ -132,24 +132,25 @@ int createFile(int address, int id, char name[20], int type, int parentId, void*
 //
 //   char addressPointers[20];
 //   memset( &addressPointers, 0, sizeof(int) * 20 );
-//   read_object(20, &response.data_table[0], addressPointers);
+//   read_object(20, response.data_table.datablocks[0], addressPointers);
 //
 //   int links = *(int*)addressPointers;
 //
-//   for (int i = 0; i < 9; i++){
-//     if(links[i] == '0'){
-//       links[i] = newFileInode;
+//   for (int i = 0; i < 8; i++){
+//     if(*(&links + i * sizeof(int)) == 0){
+//       *(&links + i * sizeof(int)) = newFileInode;
 //       break;
 //     }
 //   }
 //   // Save over the top of the other file
 //   int oldAddress = 0;
-//   createFile(response.datablocks[0], response.id, response.name, response.type, response.parentId, &links, 20, &oldAddress);
+//   createFile(response.data_table.datablocks[0], response.id, response.name, response.type, response.parentId, &links, 0, &oldAddress);
 //   inode_t secondResponse;
 //   memset( &secondResponse, 0, sizeof(inode_t) );
 //   readFile(folderInode, &secondResponse);
 //
 // }
+
 void updateFolderWithAddress(int folderDataAddr, int folderInode, int newFileInode){
   // Read exisiting
   inode_t response;
@@ -157,17 +158,16 @@ void updateFolderWithAddress(int folderDataAddr, int folderInode, int newFileIno
   readFile(folderInode, &response);
 
   // Create the new data object
-  for( int i = 0; i < 9; i++){
+  for( int i = 0; i < 8; i++){
       if(response.data_table.datablocks[i] == 0){
           response.data_table.datablocks[i] = newFileInode;
           break;
       }
-
   }
 
   // Save over the top of the other file
   int oldAddress = 0;
-  createFile(folderDataAddr, response.id, response.name, response.type, response.parentId, &response.data_table.datablocks, 20, &oldAddress);
+  createFile(folderDataAddr, response.id, response.name, response.type, response.parentId, &response.data_table.datablocks, 32, &oldAddress);
   inode_t secondResponse;
   memset( &secondResponse, 0, sizeof(inode_t) );
   readFile(folderInode, &secondResponse);
@@ -185,7 +185,7 @@ int findInode(char name[]){
 
 
   inode_t fileResponse;
-  for(int i = 0; i < 9; i++){
+  for(int i = 0; i < 8; i++){
     int file_inode_address = response.data_table.datablocks[i];
     memset( &fileResponse, 0, sizeof(inode_t) );
     readFile(file_inode_address, &fileResponse);
@@ -196,11 +196,15 @@ int findInode(char name[]){
   return -1;
 }
 
-void filesCreate(char name[20], char content[20], int type){
+void filesCreate(char name[20], char content[32], int type){
   int fileInodeAddress = 0;
-  int lastAddress = createFile(next_free_address, next_free_id,name, type, 0, &content, 20, &fileInodeAddress);
+  int lastAddress = createFile(next_free_address, next_free_id, name, type, 0, &content, 32, &fileInodeAddress);
   next_free_address = lastAddress + ADDRESS_INCREMENT;
   next_free_id += 1;
+
+  updateFolderWithAddress(root_addr, root_inode_addr, fileInodeAddress);
+
+
 }
 int filesRead(char name[20], inode_t *output){
   // for (int j = 0; j < inodeNumber; j++){
@@ -218,19 +222,19 @@ int filesRead(char name[20], inode_t *output){
   //       return -1;
   //   }
   // }
-  return -1;
+
 
 }
 
 void files_init(){
-  char data[20] = "hello";
-  int links[20];
+  char data[32] = "hello";
+  int links[8];
   memset( &links, 0, sizeof(int) * 20 );
 
 
   int inodeAddress = 0;
   root_addr = next_free_address;
-  int lastAddress = createFile(next_free_address, next_free_id,"rootfolder", 2, 0, &links, 20, &inodeAddress);
+  int lastAddress = createFile(next_free_address, next_free_id,"rootfolder", 2, 0, &links, 32, &inodeAddress);
   root_inode_addr = inodeAddress;
   next_free_address = lastAddress + ADDRESS_INCREMENT;
   next_free_id += 1;
@@ -277,15 +281,5 @@ void files_init(){
     // // 0 for p1, 10 for p2
     // // supernode_t newNode = *(supernode_t*)buffer;
     // // printf("newnode: %d\n", newNode.info);
-
-}
-
-int main(){
-  files_init();
-
-  // printf("size: %lu \n", sizeof(buffer));
-  // printf("size: %lu \n", sizeof(supnode));
-  // printf("size: %lu \n", sizeof(supnode.info));
-  // printf("size: %lu \n", sizeof(int));
 
 }

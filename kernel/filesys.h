@@ -25,7 +25,7 @@ typedef struct {
 
 typedef struct {
   char s;
-  int datablocks[9];
+  int datablocks[8];
   int length;
   char e;
 } table_t;
@@ -36,7 +36,7 @@ typedef struct {
   int parentId; // 4
   int type; // 4
   char name[20]; // 20
-  table_t data_table; // 4 * 9
+  table_t data_table; // 4 * 8
   table_t *single_table; // 4
   table_t **double_table; // 4
   table_t ***triple_table; // 4

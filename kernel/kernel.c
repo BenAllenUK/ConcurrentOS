@@ -18,14 +18,14 @@ void scheduler( ctx_t* ctx ) {
 }
 
 void kernel_handler_rst( ctx_t* ctx              ) {
-  // files_init();
+
 
   fifo_init(&pcb_queue);
   fifo_init(&input_request_queue);
   fifo_init(&user_input_queue);
 
   ipc_init(2,3);
-
+  top_of_stack = (uint32_t) &tos_All;
   // memset( &pcb[ 1 ], 0, sizeof( pcb_t ) );
   // pcb[ 1 ].pid      = 1;
   // pcb[ 1 ].ctx.cpsr = 0x50;
@@ -84,6 +84,9 @@ void kernel_handler_rst( ctx_t* ctx              ) {
   UART0->CR              = 0x00000301; // enable UART (Tx+Rx)
 
   irq_enable();
+
+
+  system_init();
 
   return;
 }

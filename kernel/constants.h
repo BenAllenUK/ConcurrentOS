@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define TIMER_INTERVAL 0x00100000
+#define STACK_SIZE 0x00001000
 #define MAX_PROCCESORS 10
 #define MAX_CHANNELS 10
 #define ENTRY_CHAR 'Q'
@@ -16,7 +17,7 @@ typedef struct {
 } ctx_t;
 
 typedef struct {
-  uint32_t priority, parentId;
+  uint32_t priority, parentId, age;
 } stats_t;
 
 typedef int pid_t;
@@ -27,5 +28,6 @@ typedef struct {
   stats_t stats;
 } pcb_t;
 
+extern uint32_t tos_All;
 
 #endif

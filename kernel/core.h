@@ -11,6 +11,8 @@
 #include "PL011.h"
 #include "libc.h"
 
+uint32_t top_of_stack;
+
 int core_process_finished();
 // void core_init(queue_t *pcb_queue, pcb_t *pcb[]);
 void core_fork(queue_t *pcb_queue, pcb_t *pcb, int current_focus);
