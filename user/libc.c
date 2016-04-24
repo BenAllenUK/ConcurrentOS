@@ -149,6 +149,41 @@ void clear(){
   char *string = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
   write( 0, string, strlen(string));
 }
+
+void channel_push(int chan_id, int to_id, int data){
+  int r;
+  asm volatile( "mov r0, %1 \n"
+                "mov r1, %2 \n"
+                "mov r2, %3 \n"
+                "svc #10    \n"
+                "mov %0, r0 \n"
+              : "=r" (r)
+              : "r" (chan_id), "r" (to_id), "r" (data)
+              : "r0", "r1", "r2" );
+
+}
+
+int channel_pull(int chan_id, int to_id){
+  int r = 0;
+  int is_waiting_for_val = 1;
+  while( is_waiting_for_val ){
+    asm volatile( "mov r0, %1 \n"
+                  "mov r1, %2 \n"
+                  "mov r2, %3 \n"
+                  "svc #11    \n"
+                  "mov %0, r0 \n"
+                : "=r" (r)
+                : "r" (chan_id), "r" (to_id), "r" (to_id)
+                : "r0", "r1", "r2" );
+    if( r > 0 ){
+      is_waiting_for_val = 0;
+    }
+  }
+
+  return r;
+}
+
+
 int str_match(char* input,char* check)
 {
   if (input[0] == '\0'){

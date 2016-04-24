@@ -30,6 +30,9 @@ int str_match(char* input,char* check);
 void show_display();
 void hide_display();
 
+void channel_push(int chan_id, int to_id, int data);
+int channel_pull(int chan_id, int to_id);
+
 void read_line(char *string_from_buffer);
 int get_channel_id_to(int pid);
 #endif

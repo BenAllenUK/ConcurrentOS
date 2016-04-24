@@ -27,6 +27,8 @@ int ipc_get_channel_id(int from_id, int to_id){
     }
   }
 }
+
+
 void ipc_push(int chan_id, int to_id, int data){
   if (to_id == channels[chan_id].processA) {
     fifo_push(&(channels[chan_id].dataBtoA), data);
@@ -37,12 +39,12 @@ void ipc_push(int chan_id, int to_id, int data){
 
 int ipc_pull(int chan_id, int from_id){
   int val = -1;
-  while (val == -1){
-    if (from_id == channels[chan_id].processA) {
-      val = fifo_pop(&(channels[chan_id].dataAtoB));
-    } else if (from_id == channels[chan_id].processB) {
-      val = fifo_pop(&(channels[chan_id].dataBtoA));
-    }
+
+  if (from_id == channels[chan_id].processA) {
+    val = fifo_pop(&(channels[chan_id].dataAtoB));
+  } else if (from_id == channels[chan_id].processB) {
+    val = fifo_pop(&(channels[chan_id].dataBtoA));
   }
+
   return val;
 }

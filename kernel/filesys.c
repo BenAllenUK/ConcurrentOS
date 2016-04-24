@@ -203,21 +203,22 @@ void filesCreate(char name[20], char content[20], int type){
   next_free_id += 1;
 }
 int filesRead(char name[20], inode_t *output){
-  for (int j = 0; j < inodeNumber; j++){
-    int result = 1;
-    for(i=0;name[j][i]!='\0' && inodeNames[j][i]!='\0';i++){
-      if(name[j][i] != check[j][i]){
-        result=0;
-        break;
-      }
-    }
-    if(result){
-        readFile(inodeAddresses[j], output);
-        return 1;
-    } else {
-        return -1;
-    }
-  }
+  // for (int j = 0; j < inodeNumber; j++){
+  //   int result = 1;
+  //   for(i=0;name[j][i]!='\0' && inodeNames[j][i]!='\0';i++){
+  //     if(name[j][i] != check[j][i]){
+  //       result=0;
+  //       break;
+  //     }
+  //   }
+  //   if(result){
+  //       readFile(inodeAddresses[j], output);
+  //       return 1;
+  //   } else {
+  //       return -1;
+  //   }
+  // }
+  return -1;
 
 }
 
